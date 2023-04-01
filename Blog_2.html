@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>First Post</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<style>
+            .fix {
+                width:60%;
+                height:300px;
+            }
+            img {
+                width:100%;
+                height:100%;
+            }
+			.bolded { font-weight: bold; }
+			html{scroll-behavior:smooth}
+		</style>
+	</head>
+	<body class="is-preload">
+
+		<!-- Header -->
+			<header id="header">
+				<a href="index.html" class="title">Jackson Merchen Portfolio</a>
+				<nav>
+					<ul>
+						<li><a href="index.html">Home</a></li>
+						<li><a href="Senior_Project.html">Senior Project Main</a></li>
+						<li><a href="blog_1.html">First Post</a></li>
+						<li><a href="blog_2.html" class = "active">Second Post</a></li>
+						<li><a href="Blog_3.html">Third Post</a></li>
+					</ul>
+				</nav>
+			</header>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<section id="main" class="wrapper">
+						<div class="inner">
+							<h1 class="major">Machine Learning in Julia</h1>
+							<ul class="actions">
+								<li><a href="LearnMLinJulia.html" class="button">Full Analysis</a></li>
+							</ul>
+							<p>One of the most important parts of this project for me was to learn machine learning in Julia. Machine learning allows a model to be trained on features to predict a target. A simple example is having a model predict the age of a tree based on its height and width. To learn the different packages in Julia, I will use MLB team data to predict the number of games that a team will win in a given season. Data used for this part of the project is from <a class = "bolded" href = "https://www.seanlahman.com/baseball-archive/statistics/">Lahman's Baseball Database</a>.</p>
+							<h2>Data Preparation</h2>
+							<p>Lahman's Baseball Database provides both data for player's pitching, fielding, and batting as well as a team's yearly statistics. While the team's yearly statistics provides 25 features for the team, I opted for using the individual player stats to aggregate into full team stats to provide over 40 features for the model to be trained on.</p>
+							<p>The first part of this process is changing some of the team names to match for each of the datasets so a join can work properly. This process includes defining a dictionary and then mapping those value to the original data. Doing this can be done using Base Julia.</p>
+							<div style="display: flex;">
+								<p style="margin-left: 10px;">Next, we can start the process of grouping the data to find aggregates so, for each season taken into account, each team's total stats and wins will be present in the data as an individual instance. In Julia, grouping the data based on year and team gives a separate table for each team and year, with each table containing individual player stats for that season. Thus, the method split-apply-combine will be used. The function groupby groups (splits) the data, then in the apply section we grab the columns that we want to find aggregates for, and finaly we sum as we combine the individual datasets into a single dataset again. Applying this method to each the batting, fielding, and pitching datasets then gives us team season stats, which then allows us join the data. Joining the data is done via the leftjoin function, giving us the dataframe we will use for the model.</p>
+								<img src = "images/Blog2_1.png" style = "width: 50%;height:300px;">
+							</div>
+							<img src = "images/Blog2_2.png" style = "width: 50%;height:350px;">
+							<h2>Trained Model</h2>
+							<h3>Train-Test-Split</h3>
+							<div style="display: flex;">
+								<img src = "images/Blog2_3.png" style = "width: 35%;height:300px;">
+								<p style="margin-right: 10px;">When training a model, it is important to split the data used in two sets. The first set is for training the model, while the second set is for testing the model. Splitting the model can be done via the randsplit function in the package <a href = "https://juliapackages.com/p/xgboost" class = "bolded">XGBoost.jl</a>. Before I found this, however, I had created a function to create the splits. This function utilizes the packages <a href = "https://github.com/JuliaLang/LinearAlgebra.jl" class = "bolded">LinearAlgebra.jl</a> and <a href = "https://juliapackages.com/p/multivariatestats" class = "bolded">MultivariateStats.jl</a>. It also uses one of the built in Julia macros. The macros in Julia transform data much like a function, but can be used to test and evaluate data to be passed to a function. A macro can be called by the @ symbol. In the function, the built-in macro "assert" tests the data to only allow certain values. We use the assert macro to check that the percent to split the dataset is between 0 and 1.</p>
+							</div>
+							<h3>XGBoost</h3>
+							<p>The model that was trained was an "extreme gradient boosted" model, or XGBoost, from the package XGBoost.jl. Training an XGBoost model first requires the features and the target of the model to be fed to the function DMatrix, where the features are inputted as a matrix. Next, we can set the hyperparameters in a dictionary and choose the number of rounds that the model will be trained on. Each of these can then be fed to the model in the xgboost function where the model is defined.</p>
+							<img src = "images/Blog2_4.png" style = "width:450px;height:300px;">
+							<p>Once the model is trained, it can be used to predict the target for the test data. Root mean squared error is used as the metric for evaluating performance, which comes in at 4.323. This means that, on average, the predicted values are 4.323 games away from the actual values. The plot below demonstrates the accuracy of the model as the dots are centered around the line, which represents predicted values being 100% accuarate.</p>
+							<img src = "images/Blog2_5.png" style = "width:550px;height:450px;">
+							<h3>Feature Importance</h3>
+							<p>Once a model is trained, the function XGBoost.importance() can be used to show which features were the most influential in predicting the target. The drawback of this function is that the function (which was provided to the model as a matrix) is not listed by name. Instead, the features are listed as a number, starting at zero. Alternatively, a feature can be evaluated from the magnitude of their correlation to the target. There were some features, however, that had a decent correlation, but were low in order of importance.</p>
+							<h3>Other Models</h3>
+							<p>Before the XGBoost model was trained and used for prediction, I attempted using a neural network and PCA analysis. A neural network can be trained from the <a href = "https://fluxml.ai/Flux.jl/stable/" class = "bolded">Flux.jl</a> package. To train a neural network, a function needs to be defined from the user for layers to be added and defined. This model was not used because of the low accuracy of the model. PCA analysis can be done from the MultivariateStats package. In order for the PCA to work for the data, the data needs to be transformed. However, there was an issue with the installed version of MultivariateStats where the data would not transform properly. For the sake of time, I decided to forego PCA analysis for the time being.</p>
+							<p>The full analysis and code can be found at the <a href = "#top" class = "bolded">top</a></p>
+						</div>
+					</section>
+
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer" class="wrapper alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>

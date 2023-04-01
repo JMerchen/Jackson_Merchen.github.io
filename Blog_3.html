@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>First Post</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<style>
+            .fix {
+                width:60%;
+                height:300px;
+            }
+            img {
+                width:100%;
+                height:100%;
+            }
+			.bolded { font-weight: bold; }
+			html{scroll-behavior:smooth}
+		</style>
+	</head>
+	<body class="is-preload">
+
+		<!-- Header -->
+			<header id="header">
+				<a href="index.html" class="title">Jackson Merchen Portfolio</a>
+				<nav>
+					<ul>
+						<li><a href="index.html">Home</a></li>
+						<li><a href="Senior_Project.html">Senior Project Main</a></li>
+						<li><a href="blog_1.html">First Post</a></li>
+						<li><a href="blog_2.html">Second Post</a></li>
+						<li><a href="blog_3.html" class = "active">Third Post</a></li>
+					</ul>
+				</nav>
+			</header>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<section id="main" class="wrapper">
+						<div class="inner">
+							<h1 class="major">JuMP and Lasso in Julia</h1>
+							<ul class="actions">
+								<li><a href="Analyzing_ELO.html" class="button">Full Analysis</a></li>
+							</ul>
+							<p>The purpose of the last portion of this project was to introduce myslef to the package JuMP and to use a Lasso model within Julia. Both of these are included in the machine learning side of Julia. The data for this part of the project was collected from <a href = "https://fivethirtyeight.com/" class = "bolded">FiveThirtyEight</a>, <a href = "https://www.espn.com/" class = "bolded">ESPN</a>, and <a href = "https://www.baseballprospectus.com/" class = "bolded">Baseball Prospectus</a>. Models were taken from each of these sources and then used to create a new model with each taken into account.</p>
+							<h3 class = "major">JuMP</h3>
+							<p><a href = "hhttps://jump.dev/JuMP.jl/stable/" class = "bolded">JuMP</a>, or Julia for Mathematical Programming, is a tool that is written in the language of Julia. It is called the same way a package is and assists in model creation and optimization. It supports a veriety of solvers for problems, including both linear and nonlinear programming. Using JuMP was one of the biggest problems that I have run into throughout this project as it, when setting the objective for optimization, repeatedly killed the kernel. Unfortunately, I was not able to solve this issue, making this an issue that I will still need to solve and is a topic for further research. The concept behind my use of it, though, was that an XGBoost model was created, a solver was chosen (options include <a href = "https://juliapackages.com/p/highs" class= "bolded">HiGHS</a>, <a href = "https://juliapackages.com/p/glpk" class = "bolded">GLPK</a>, and <a href = "https://docs.juliahub.com/Gurobi/do9v6/0.8.1/" class = "bolded">Gurobi</a>), and the objective of the optimization problem is set for the model to be trained.</p>
+							<h3 class = "major">Lasso</h3>
+							<p><a href = "https://juliastats.org/Lasso.jl/stable/" class = "bolded">Lasso</a> is a package in Julia that allows one to use Lasso models. Lasso models are linear regression models that use L1 regularization to perform variable selection and avoid overfitting. The data for the model is from MLB team standings, <a href = "https://projects.fivethirtyeight.com/2023-mlb-predictions/" class = "bolded">ELO</a> from FiveThirtyEight, <a href = "https://www.baseballprospectus.com/standings/" class = "major">PECOTA</a> from Baseball Prospectus, and ESPN projections, each for the 2017 to 2022 seasons (excluding the COVID shortened 2020 season).</p>
+							<p>Before using the models to train a new combined model, the RMSE for each of the models was first looked at to see how the individual models were performing. Root mean squared error was selected as the metric of the models as the units of it were in the original units (wins). Each of the models had an RMSE between 10 and 11, with ELO having the lowest by a mere .26 over PECOTA and then ESPN coming in at .75 below ELO. The goal of creating a new model would then be to create a model with an RMSE below 10 and use it to predict the 2023 season.</p>
+							<p>Lasso creates a number of models with each having a varying amount of coefficients, with those coefficients being driven to zero by a penalty from the L1 regularization. The output of a trained model from the package looks like the sample below, with each row representing a different model. Each model can then be used to predict a test set of data and have its RMSE found from the predictions. The model with the lowest RMSE will then be used to predict the 2023 standings based on the ELO, PECOTA, and ESPN projections.</p>
+							<img src = "images/Lasso.png" style = "width:550px;height:550px;">
+							<p>The model with the lowest RMSE had an RMSE of around 9.5, which is about .53 below the RMSE of ELO. While this is not too different than ELO, the predictions for the 2023 season are usually off from the predictions of ELO by one or two games. The full predictions for the 2023 season can be seen below with the full analysis at the <a href = "#top" class = "bolded">top</a></p>
+							<img src = "images/PredictedWins1.png" style = "width:525px;height:650px;">
+							<img src = "images/PredictedWins2.png" style = "width:525px;height:650px;">
+						</div>
+					</section>
+
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer" class="wrapper alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
